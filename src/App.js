@@ -1,24 +1,42 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect } from "react";
+import { useSelector } from "react-redux";
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import Navbar from "./components/Navbar/Navbar";
+import Clase from "./pages/Clase/Clase";
+import Error from "./pages/Error/Error";
+import Home from "./pages/Home/Home";
+import Login from "./pages/Login/Login";
+import Registro from "./pages/Registro/Registro";
+import { selectUser } from "./store/userSlice";
 
 function App() {
+  const user = useSelector(selectUser);
+
+  useEffect(() => {
+    localStorage.setItem("user", JSON.stringify(user));
+  }, [user]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      {user ? <Navbar /> : null}
+      <Switch>
+        <Route exact path="/">
+          {user ? <Clase /> : <Home />}
+        </Route>
+        <Route exact path="/ingreso">
+          <Login />
+        </Route>
+        <Route exact path="/registro">
+          <Registro />
+        </Route>
+        <Route exact path="/clase">
+          {user ? <Clase /> : <Home />}
+        </Route>
+        <Route path="*">
+          <Error />
+        </Route>
+      </Switch>
+    </Router>
   );
 }
 
